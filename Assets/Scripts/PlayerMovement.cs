@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -16,6 +17,14 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 velocity;
     bool isGrounded;
+
+    void Start()
+    {
+        if (SceneManager.GetActiveScene().name != "ExteriorScene")
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
 
     // Update is called once per frame
     void Update()
