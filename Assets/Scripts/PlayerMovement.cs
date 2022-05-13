@@ -10,13 +10,19 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 12f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
+    public float sprintMultiplier = 1.5f;
 
     public Transform groundCheck;
     public float groundDistance = 0.2f;
     public LayerMask groundMask;
+    public Camera cam;
 
+    private float fovTargetNormal = 60f;
+    private float fovTargetSprint = 80f;
     Vector3 velocity;
     bool isGrounded;
+    bool isSprinting;
+    bool isCrouching;
 
     void Start()
     {
@@ -24,6 +30,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
+        isSprinting = false;
+        isCrouching = false;
     }
 
     // Update is called once per frame
@@ -36,12 +44,39 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
+        if (Input.GetKeyDown("left shift"))
+        {
+            isSprinting = !isSprinting;
+        }
+
+        if (Input.GetKeyDown("left ctrl"))
+        {
+            isCrouching = !isCrouching;
+        }
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        if (isSprinting)
+        {
+            //cam.fieldOfView = 90f;
+            if (cam.fieldOfView < fovTargetSprint)
+            {
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovTargetSprint, 10 * Time.deltaTime);
+            }
+            controller.Move(move * speed * Time.deltaTime * sprintMultiplier);
+        }
+        else
+        {
+            //cam.fieldOfView = 60f;
+            if (cam.fieldOfView > fovTargetNormal)
+            {
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovTargetNormal, 10 * Time.deltaTime);
+            }
+            controller.Move(move * speed * Time.deltaTime);
+        }
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
