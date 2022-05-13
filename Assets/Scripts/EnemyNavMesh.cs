@@ -5,17 +5,28 @@ using UnityEngine.AI;
 
 public class EnemyNavMesh : MonoBehaviour
 {
-    [SerializeField] private Transform movePositionTransform;
+    public enum State { Patrol, Chase, Investigate, ReturnPatrol };
 
+    [SerializeField] private Transform playerPosition;
     private NavMeshAgent navMeshAgent;
+    public State myState;
 
     private void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        myState = State.Chase;
     }
 
     private void Update()
     {
-        navMeshAgent.destination = movePositionTransform.position;
+        if (myState == State.Chase)
+        {
+            navMeshAgent.isStopped = false;
+            navMeshAgent.destination = playerPosition.position;
+        }
+        else
+        {
+            navMeshAgent.isStopped = true;
+        }
     }
 }
