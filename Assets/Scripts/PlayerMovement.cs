@@ -44,9 +44,19 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f;
         }
 
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        Vector3 move = transform.right * x + transform.forward * z;
+
         if (Input.GetKeyDown("left shift"))
         {
             isSprinting = !isSprinting;
+        }
+
+        if (move.x == 0 && move.z == 0)
+        {
+            isSprinting = false;
         }
 
         if (Input.GetKeyDown("left ctrl"))
@@ -54,12 +64,12 @@ public class PlayerMovement : MonoBehaviour
             isCrouching = !isCrouching;
         }
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        if (!isGrounded)
+        {
+            isSprinting = false;
+        }
 
-        Vector3 move = transform.right * x + transform.forward * z;
-
-        if (isSprinting)
+        if (isSprinting && isGrounded)
         {
             //cam.fieldOfView = 90f;
             if (cam.fieldOfView < fovTargetSprint)
