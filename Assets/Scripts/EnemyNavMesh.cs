@@ -16,12 +16,20 @@ public class EnemyNavMesh : MonoBehaviour
     public State myState;
     public Transform[] waypoints;
 
+    public Light spotLight;
+    public float viewDistance;
+    public LayerMask viewMask;
+    float viewAngle;
+    Color originalSpotlightColor;
+
     private void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         myAnimator = GetComponent<Animator>();
         myState = State.Patrol;
         targetWaypoint = 1;
+        viewAngle = spotLight.spotAngle;
+        originalSpotlightColor = spotLight.color;
         StartCoroutine(FollowPath());
     }
 
@@ -42,6 +50,14 @@ public class EnemyNavMesh : MonoBehaviour
             {
                 actualWaypoint = (actualWaypoint + 1) % waypoints.Length;
             }*/
+        }
+        if (CanSeePlayer())
+        {
+            spotLight.color = Color.red;
+        }
+        else
+        {
+            spotLight.color = originalSpotlightColor;
         }
     }
 
@@ -67,11 +83,30 @@ public class EnemyNavMesh : MonoBehaviour
         }
     }
 
+    bool CanSeePlayer()
+    {
+        if (Vector3.Distance(transform.position, playerPosition.position) < viewDistance)
+        {
+            Vector3 dirToPlayer = (playerPosition.position - transform.position).normalized;
+            float angleBetweenGuardAndPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+            if (angleBetweenGuardAndPlayer < viewAngle / 2f)
+            {
+                if (!Physics.Linecast(transform.position, playerPosition.position, viewMask))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void OnDrawGizmos()
     {
         foreach (Transform waypoint in pathHolder)
         {
             Gizmos.DrawSphere(waypoint.position, .3f);
         }
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(this.transform.position, transform.forward * viewDistance);
     }
 }
