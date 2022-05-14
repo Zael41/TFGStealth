@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private float fovTargetSprint = 80f;
     private float normalPlayerHeight = 1.75f;
     private float crouchedPlayerHeight = 0.5f;
+    private float interiorScaleFactor = 1f;
     Vector3 velocity;
     Vector3 fixHeight;
     bool isGrounded;
@@ -33,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
         if (SceneManager.GetActiveScene().name != "ExteriorScene")
         {
             Cursor.lockState = CursorLockMode.Locked;
+            interiorScaleFactor = 0.8f;
         }
         isSprinting = false;
         isCrouching = false;
@@ -53,20 +55,18 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        if (Input.GetKeyDown("left shift"))
-        {
-            isSprinting = !isSprinting;
-        }
+        SprintControl(move);
+        CrouchControl();
+        MovementControl(move);
+        JumpControl();
+    }
 
-        if (move.x == 0 && move.z == 0)
-        {
-            isSprinting = false;
-        }
-
+    void CrouchControl()
+    {
         if (Input.GetKeyDown("left ctrl"))
         {
             isCrouching = !isCrouching;
-            fixHeight = new Vector3(0f, 0.625f, 0f);
+            fixHeight = new Vector3(0f, 0.625f * interiorScaleFactor, 0f);
             if (isCrouching) groundCheck.position += fixHeight;
             else groundCheck.position -= fixHeight;
         }
@@ -86,12 +86,28 @@ public class PlayerMovement : MonoBehaviour
                 controller.height = Mathf.Lerp(controller.height, normalPlayerHeight, 10 * Time.deltaTime);
             }
         }
+    }
+
+    void SprintControl(Vector3 move)
+    {
+        if (Input.GetKeyDown("left shift"))
+        {
+            isSprinting = !isSprinting;
+        }
+
+        if (move.x == 0 && move.z == 0)
+        {
+            isSprinting = false;
+        }
 
         if (!isGrounded)
         {
             isSprinting = false;
         }
+    }
 
+    void MovementControl(Vector3 move)
+    {
         if (isSprinting && isGrounded)
         {
             //cam.fieldOfView = 90f;
@@ -118,7 +134,10 @@ public class PlayerMovement : MonoBehaviour
             }
             controller.Move(move * speed * Time.deltaTime);
         }
+    }
 
+    void JumpControl()
+    {
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
