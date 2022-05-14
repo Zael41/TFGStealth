@@ -7,6 +7,8 @@ public class EnemyNavMesh : MonoBehaviour
 {
     public enum State { Patrol, Chase, Investigate};
 
+    public static event System.Action OnGuardHasSpottedPlayer;
+
     [SerializeField] private Transform playerPosition;
     private NavMeshAgent navMeshAgent;
     private Animator myAnimator;
@@ -19,6 +21,8 @@ public class EnemyNavMesh : MonoBehaviour
     public Light spotLight;
     public float viewDistance;
     public LayerMask viewMask;
+    public float timeToSpotPlayer = .5f;
+    float playerVisibleTimer;
     float viewAngle;
     Color originalSpotlightColor;
 
@@ -53,11 +57,22 @@ public class EnemyNavMesh : MonoBehaviour
         }
         if (CanSeePlayer())
         {
-            spotLight.color = Color.red;
+            //spotLight.color = Color.red;
+            playerVisibleTimer += Time.deltaTime;
         }
         else
         {
-            spotLight.color = originalSpotlightColor;
+            //spotLight.color = originalSpotlightColor;
+            playerVisibleTimer -= Time.deltaTime;
+        }
+        playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
+        spotLight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
+        if (playerVisibleTimer >= timeToSpotPlayer)
+        {
+            if (OnGuardHasSpottedPlayer != null)
+            {
+                OnGuardHasSpottedPlayer();
+            }
         }
     }
 

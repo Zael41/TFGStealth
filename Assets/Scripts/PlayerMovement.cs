@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     bool isGrounded;
     bool isSprinting;
     bool isCrouching;
+    bool disabled;
 
     void Start()
     {
@@ -38,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
         }
         isSprinting = false;
         isCrouching = false;
+        EnemyNavMesh.OnGuardHasSpottedPlayer += Disable;
     }
 
     // Update is called once per frame
@@ -52,13 +54,20 @@ public class PlayerMovement : MonoBehaviour
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
-
-        Vector3 move = transform.right * x + transform.forward * z;
-
-        SprintControl(move);
+        Vector3 move = Vector3.zero;
+        if (!disabled)
+        {
+            move = transform.right * x + transform.forward * z;
+            SprintControl(move);
+            CrouchControl();
+            MovementControl(move);
+            JumpControl();
+        }
+        
+        /*SprintControl(move);
         CrouchControl();
         MovementControl(move);
-        JumpControl();
+        JumpControl();*/
     }
 
     void CrouchControl()
@@ -146,5 +155,15 @@ public class PlayerMovement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    void Disable()
+    {
+        disabled = true;
+    }
+
+    void OnDestroy()
+    {
+        EnemyNavMesh.OnGuardHasSpottedPlayer -= Disable;
     }
 }
