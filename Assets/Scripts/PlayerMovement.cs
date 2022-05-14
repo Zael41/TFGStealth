@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
     public float sprintMultiplier = 1.5f;
+    public float crouchMultiplier = 0.5f;
 
     public Transform groundCheck;
     public float groundDistance = 0.2f;
@@ -100,9 +101,17 @@ public class PlayerMovement : MonoBehaviour
             }
             controller.Move(move * speed * Time.deltaTime * sprintMultiplier);
         }
-        else
+        else if (isCrouching && isGrounded)
         {
             //cam.fieldOfView = 60f;
+            if (cam.fieldOfView > fovTargetNormal)
+            {
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovTargetNormal, 10 * Time.deltaTime);
+            }
+            controller.Move(move * speed * Time.deltaTime * crouchMultiplier);
+        }
+        else
+        {
             if (cam.fieldOfView > fovTargetNormal)
             {
                 cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fovTargetNormal, 10 * Time.deltaTime);
