@@ -19,7 +19,10 @@ public class PlayerMovement : MonoBehaviour
 
     private float fovTargetNormal = 60f;
     private float fovTargetSprint = 80f;
+    private float normalPlayerHeight = 1.75f;
+    private float crouchedPlayerHeight = 0.5f;
     Vector3 velocity;
+    Vector3 fixHeight;
     bool isGrounded;
     bool isSprinting;
     bool isCrouching;
@@ -62,6 +65,25 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown("left ctrl"))
         {
             isCrouching = !isCrouching;
+            fixHeight = new Vector3(0f, 0.625f, 0f);
+            if (isCrouching) groundCheck.position += fixHeight;
+            else groundCheck.position -= fixHeight;
+        }
+
+        if (isCrouching)
+        {
+            isSprinting = false;
+            if (controller.height > crouchedPlayerHeight)
+            {
+                controller.height = Mathf.Lerp(controller.height, crouchedPlayerHeight, 10 * Time.deltaTime);
+            }
+        }
+        else
+        {
+            if (controller.height < normalPlayerHeight)
+            {
+                controller.height = Mathf.Lerp(controller.height, normalPlayerHeight, 10 * Time.deltaTime);
+            }
         }
 
         if (!isGrounded)
