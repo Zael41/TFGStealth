@@ -14,6 +14,7 @@ public class EnemyNavMesh : MonoBehaviour
     private Animator myAnimator;
     public int targetWaypoint;
     public Timer timer;
+    public ArrayList scripts = new ArrayList();
 
     public Transform pathHolder;
     public State myState;
@@ -22,11 +23,12 @@ public class EnemyNavMesh : MonoBehaviour
     public Light spotLight;
     public float viewDistance;
     public LayerMask viewMask;
-    public float timeToSpotPlayer = 5f;
-    float playerVisibleTimer;
+    public static float timeToSpotPlayer = 5f;
+    static float playerVisibleTimer;
     float viewAngle;
     Color originalSpotlightColor;
     bool playerDisabled;
+    static EnemyNavMesh lastGuard;
 
     private void Awake()
     {
@@ -38,6 +40,14 @@ public class EnemyNavMesh : MonoBehaviour
         originalSpotlightColor = spotLight.color;
         StartCoroutine(FollowPath());
         playerDisabled = false;
+
+        GameObject[] guards = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject enemy in guards)
+        {
+            scripts.Add(enemy.GetComponent<EnemyNavMesh>());
+        }
+        lastGuard = (EnemyNavMesh)scripts[0];
     }
 
     private void Update()
@@ -62,15 +72,17 @@ public class EnemyNavMesh : MonoBehaviour
         {
             //spotLight.color = Color.red;
             playerVisibleTimer += Time.deltaTime;
+            lastGuard = this;
         }
-        else
+        else if (this == lastGuard)
         {
             //spotLight.color = originalSpotlightColor;
             playerVisibleTimer -= Time.deltaTime;
         }
         playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
         ManageTimer();
-        spotLight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
+        if (this == lastGuard) spotLight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
+        else spotLight.color = Color.Lerp(originalSpotlightColor, Color.red, 0f / timeToSpotPlayer);
         if (playerVisibleTimer >= timeToSpotPlayer)
         {
             if (OnGuardHasSpottedPlayer != null)
@@ -91,7 +103,7 @@ public class EnemyNavMesh : MonoBehaviour
         {
             timer.DisplayTime(timeToSpotPlayer - playerVisibleTimer, true);
         }
-        else if (playerVisibleTimer > 0)
+        else if (playerVisibleTimer > 0 && this == lastGuard)
         {
             timer.DisplayTime(timeToSpotPlayer - playerVisibleTimer, false);
         }

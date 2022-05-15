@@ -30,7 +30,6 @@ public class Timer : MonoBehaviour
     public void DisplayTime(float timeToDisplay, bool isDecaying)
     {
         timerText.gameObject.SetActive(true);
-        Debug.Log(timeToDisplay);
         if (timeToDisplay < 0)
         {
             timeToDisplay = 0;
