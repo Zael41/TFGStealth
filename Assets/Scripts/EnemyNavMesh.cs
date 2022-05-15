@@ -13,6 +13,7 @@ public class EnemyNavMesh : MonoBehaviour
     private NavMeshAgent navMeshAgent;
     private Animator myAnimator;
     public int targetWaypoint;
+    public Timer timer;
 
     public Transform pathHolder;
     public State myState;
@@ -21,10 +22,11 @@ public class EnemyNavMesh : MonoBehaviour
     public Light spotLight;
     public float viewDistance;
     public LayerMask viewMask;
-    public float timeToSpotPlayer = .5f;
+    public float timeToSpotPlayer = 5f;
     float playerVisibleTimer;
     float viewAngle;
     Color originalSpotlightColor;
+    bool playerDisabled;
 
     private void Awake()
     {
@@ -35,6 +37,7 @@ public class EnemyNavMesh : MonoBehaviour
         viewAngle = spotLight.spotAngle;
         originalSpotlightColor = spotLight.color;
         StartCoroutine(FollowPath());
+        playerDisabled = false;
     }
 
     private void Update()
@@ -66,13 +69,31 @@ public class EnemyNavMesh : MonoBehaviour
             playerVisibleTimer -= Time.deltaTime;
         }
         playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
+        ManageTimer();
         spotLight.color = Color.Lerp(originalSpotlightColor, Color.red, playerVisibleTimer / timeToSpotPlayer);
         if (playerVisibleTimer >= timeToSpotPlayer)
         {
             if (OnGuardHasSpottedPlayer != null)
             {
                 OnGuardHasSpottedPlayer();
+                playerDisabled = true;
             }
+        }
+    }
+
+    void ManageTimer()
+    {
+        if (playerDisabled)
+        {
+            return;
+        }
+        if (CanSeePlayer())
+        {
+            timer.DisplayTime(timeToSpotPlayer - playerVisibleTimer, true);
+        }
+        else if (playerVisibleTimer > 0)
+        {
+            timer.DisplayTime(timeToSpotPlayer - playerVisibleTimer, false);
         }
     }
 
