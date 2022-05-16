@@ -65,7 +65,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 439
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -312,11 +312,14 @@ MonoBehaviour:
   speed: 12
   gravity: -9.81
   jumpHeight: 3
+  sprintMultiplier: 1.5
+  crouchMultiplier: 0.5
   groundCheck: {fileID: 3878630338238587425}
   groundDistance: 0.2
   groundMask:
     serializedVersion: 2
     m_Bits: 128
+  cam: {fileID: 0}
 --- !u!1001 &3878630339736851685
 PrefabInstance:
   m_ObjectHideFlags: 0
