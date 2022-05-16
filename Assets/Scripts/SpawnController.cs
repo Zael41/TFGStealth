@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class SpawnController : MonoBehaviour
 {
     public static SpawnController instance;
+    public static string spawnObject;
+    public static bool introPlayed;
 
     // Start is called before the first frame update
     void Awake()
@@ -19,6 +21,7 @@ public class SpawnController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     // Update is called once per frame
@@ -29,6 +32,8 @@ public class SpawnController : MonoBehaviour
 
     public void ChangeScene (string position, int sceneIndex)
     {
+        spawnObject = position;
+        introPlayed = true;
         if (sceneIndex == 1)
         {
             SceneManager.LoadScene("Floor1Scene");
@@ -37,8 +42,19 @@ public class SpawnController : MonoBehaviour
         {
             SceneManager.LoadScene("ExteriorScene");
         }
-        Transform player = GameObject.Find("FirstPersonPlayer").GetComponent<Transform>();
-        Transform spawn = GameObject.Find(position).GetComponent<Transform>();
-        player.position = spawn.position;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnSceneLoaded: " + scene.name);
+        if (scene.name != "MainMenuScene")
+        {
+            Transform player = GameObject.Find("FirstPersonPlayer").GetComponent<Transform>();
+            if (spawnObject != null)
+            {
+                Transform spawn = GameObject.Find(spawnObject).GetComponent<Transform>();
+                player.position = spawn.position;
+            }
+        }
     }
 }

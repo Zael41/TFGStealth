@@ -13,7 +13,12 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (SpawnController.introPlayed == true)
+        {
+            playerScript.enabled = true;
+            cameraScript.enabled = true;
+            loreText.SetActive(false);
+        }
     }
 
     // Update is called once per frame
