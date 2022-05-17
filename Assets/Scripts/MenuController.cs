@@ -37,7 +37,8 @@ public class MenuController : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("ExteriorScene");
+        //SceneManager.LoadScene("ExteriorScene");
+        SpawnController.FadeToLevel();
     }
 
     public void QuitGame()

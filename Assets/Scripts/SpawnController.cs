@@ -8,6 +8,8 @@ public class SpawnController : MonoBehaviour
     public static SpawnController instance;
     public static string spawnObject;
     public static bool introPlayed;
+    public static int sceneNumber;
+    public static Animator animator;
 
     // Start is called before the first frame update
     void Awake()
@@ -22,6 +24,7 @@ public class SpawnController : MonoBehaviour
             Destroy(gameObject);
         }
         SceneManager.sceneLoaded += OnSceneLoaded;
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -33,8 +36,14 @@ public class SpawnController : MonoBehaviour
     public void ChangeScene (string position, int sceneIndex)
     {
         spawnObject = position;
+        sceneNumber = sceneIndex;
         introPlayed = true;
-        if (sceneIndex == 1)
+        FadeToLevel();
+    }
+
+    public void LoadScenes()
+    {
+        if (sceneNumber == 1)
         {
             SceneManager.LoadScene("Floor1Scene");
         }
@@ -44,8 +53,14 @@ public class SpawnController : MonoBehaviour
         }
     }
 
+    public static void FadeToLevel()
+    {
+        animator.SetTrigger("FadeOut");
+    }
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Fade_Out")) animator.SetTrigger("FadeOut");
         Debug.Log("OnSceneLoaded: " + scene.name);
         if (scene.name != "MainMenuScene")
         {
