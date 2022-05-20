@@ -84,7 +84,6 @@ public class SpawnController : MonoBehaviour
 
     public void Transition(Transform transitionStart)
     {
-        Debug.Log("we rollin");
         string name = transitionStart.gameObject.name;
         string lastLetter = transitionStart.gameObject.name.Substring(transitionStart.gameObject.name.Length - 1);
         Debug.Log(lastLetter);
@@ -101,6 +100,7 @@ public class SpawnController : MonoBehaviour
 
     public void MovePlayer()
     {
+        Debug.Log(nextTransition.gameObject.name);
         playerMovement.gameObject.transform.position = nextTransition.position;
         playerMovement.TransitionDisable();
         animator.SetTrigger("TransitionFade");

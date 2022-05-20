@@ -117,6 +117,7 @@ public class PlayerMovement : MonoBehaviour
 
     void MovementControl(Vector3 move)
     {
+        Physics.SyncTransforms();
         if (isSprinting && isGrounded)
         {
             //cam.fieldOfView = 90f;
