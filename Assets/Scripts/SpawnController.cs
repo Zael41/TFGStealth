@@ -11,6 +11,10 @@ public class SpawnController : MonoBehaviour
     public static int sceneNumber;
     public static Animator animator;
 
+    public Transform[] transitions;
+    private Transform nextTransition;
+    public PlayerMovement playerMovement;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -71,5 +75,34 @@ public class SpawnController : MonoBehaviour
                 player.position = spawn.position;
             }
         }
+        if (scene.name == "Floor1Scene")
+        {
+            transitions = GameObject.Find("InsideTransitions").GetComponentsInChildren<Transform>();
+            playerMovement = GameObject.Find("FirstPersonPlayer").GetComponent<PlayerMovement>();
+        }
+    }
+
+    public void Transition(Transform transitionStart)
+    {
+        Debug.Log("we rollin");
+        string name = transitionStart.gameObject.name;
+        string lastLetter = transitionStart.gameObject.name.Substring(transitionStart.gameObject.name.Length - 1);
+        Debug.Log(lastLetter);
+        foreach (Transform t in transitions)
+        {
+            if (t.gameObject.name.Substring(t.gameObject.name.Length - 1) == lastLetter && t.gameObject.name != name)
+            {
+                nextTransition = t;
+            }
+        }
+        playerMovement.TransitionDisable();
+        animator.SetTrigger("TransitionFade");
+    }
+
+    public void MovePlayer()
+    {
+        playerMovement.gameObject.transform.position = nextTransition.position;
+        playerMovement.TransitionDisable();
+        animator.SetTrigger("TransitionFade");
     }
 }

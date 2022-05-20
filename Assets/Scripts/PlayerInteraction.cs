@@ -9,12 +9,14 @@ public class PlayerInteraction : MonoBehaviour
     public GameObject interactScreen;
     Camera cam;
     SpawnController spawnController;
+    InsideTransitions insideTransitions;
 
     void Start()
     {
         cam = Camera.main;
         interactScreen.SetActive(false);
         spawnController = GameObject.Find("SpawnController").GetComponent<SpawnController>();
+        if (SceneManager.GetActiveScene().name == "Floor1Scene") insideTransitions = GameObject.Find("InsideTransitions").GetComponent<InsideTransitions>();
     }
 
     // Update is called once per frame
@@ -27,13 +29,20 @@ public class PlayerInteraction : MonoBehaviour
             ShowCanvas();
             if (Input.GetKeyDown(KeyCode.E))
             {
-                if (SceneManager.GetActiveScene().name == "ExteriorScene")
+                if (hit.collider.CompareTag("SceneMove"))
                 {
-                    spawnController.ChangeScene(hit.transform.gameObject.name, 1);
+                    if (SceneManager.GetActiveScene().name == "ExteriorScene")
+                    {
+                        spawnController.ChangeScene(hit.transform.gameObject.name, 1);
+                    }
+                    else
+                    {
+                        spawnController.ChangeScene(hit.transform.gameObject.name, 2);
+                    }
                 }
-                else
+                else if (hit.collider.CompareTag("InsideMove"))
                 {
-                    spawnController.ChangeScene(hit.transform.gameObject.name, 2);
+                    spawnController.Transition(hit.transform);
                 }
             }
         }

@@ -162,6 +162,11 @@ public class PlayerMovement : MonoBehaviour
         disabled = true;
     }
 
+    public void TransitionDisable()
+    {
+        disabled = !disabled;
+    }
+
     void OnDestroy()
     {
         EnemyNavMesh.OnGuardHasSpottedPlayer -= Disable;
