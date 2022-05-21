@@ -18,13 +18,13 @@ public class Marking : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 10, enemyMask))
+        if (Physics.Raycast(ray, out hit, 50, enemyMask))
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
                 foreach (Transform child in hit.transform)
                 {
-                    child.gameObject.layer = LayerMask.NameToLayer("TaggedEnemy");
+                    if (child.gameObject.layer == LayerMask.NameToLayer("Enemy")) child.gameObject.layer = LayerMask.NameToLayer("TaggedEnemy");
                 }
                 StartCoroutine(TagEnemy(hit.transform.gameObject));
             }
@@ -33,10 +33,10 @@ public class Marking : MonoBehaviour
 
     IEnumerator TagEnemy(GameObject enemy)
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(10f);
         foreach (Transform child in enemy.transform)
         {
-            child.gameObject.layer = LayerMask.NameToLayer("Enemy");
+            if (child.gameObject.layer == LayerMask.NameToLayer("TaggedEnemy")) child.gameObject.layer = LayerMask.NameToLayer("Enemy");
         }
         yield break;
     }
