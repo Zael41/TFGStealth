@@ -14,6 +14,7 @@ public class SpawnController : MonoBehaviour
     public Transform[] transitions;
     private Transform nextTransition;
     public PlayerMovement playerMovement;
+    public GameObject pauseMenu;
 
     // Start is called before the first frame update
     void Awake()
@@ -22,19 +23,30 @@ public class SpawnController : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            animator = GetComponentInChildren<Animator>();
         }
         else
         {
             Destroy(gameObject);
         }
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape) && SceneManager.GetActiveScene().name != "MainMenuScene")
+        {
+            if (!pauseMenu.activeInHierarchy)
+            {
+                PauseMenu();
+            }
+            else
+            {
+                ReturnButton();
+            }
+        }
+
     }
 
     public void ChangeScene (string position, int sceneIndex)
@@ -51,9 +63,13 @@ public class SpawnController : MonoBehaviour
         {
             SceneManager.LoadScene("Floor1Scene");
         }
-        else
+        else if (sceneNumber == 2)
         {
             SceneManager.LoadScene("ExteriorScene");
+        }
+        else if (sceneNumber == 3)
+        {
+            SceneManager.LoadScene("MainMenuScene");
         }
     }
 
@@ -65,6 +81,11 @@ public class SpawnController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Fade_Out")) animator.SetTrigger("FadeOut");
+        if (sceneNumber == 3)
+        {
+            pauseMenu.SetActive(false);
+            animator.SetTrigger("FadeOut");
+        }
         Debug.Log("OnSceneLoaded: " + scene.name);
         if (scene.name != "MainMenuScene")
         {
@@ -104,5 +125,28 @@ public class SpawnController : MonoBehaviour
         playerMovement.gameObject.transform.position = nextTransition.position;
         playerMovement.TransitionDisable();
         animator.SetTrigger("TransitionFade");
+    }
+
+    public void PauseMenu()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        pauseMenu.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void ReturnButton()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        pauseMenu.SetActive(false);
+        Time.timeScale = 1.0f;
+    }
+
+    public void MainMenuButton()
+    {
+        Time.timeScale = 1.0f;
+        spawnObject = null;
+        introPlayed = false;
+        sceneNumber = 3;
+        FadeToLevel();
     }
 }
