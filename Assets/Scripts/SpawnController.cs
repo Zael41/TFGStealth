@@ -90,7 +90,7 @@ public class SpawnController : MonoBehaviour
             pauseMenu.SetActive(false);
             animator.SetTrigger("FadeOut");
             keyItems = 0;
-            keyitemsText.text = keyItems + " / " + "7";
+            keyitemsText.text = keyItems + " / " + "18";
         }
         Debug.Log("OnSceneLoaded: " + scene.name);
         if (scene.name != "MainMenuScene")
@@ -163,6 +163,6 @@ public class SpawnController : MonoBehaviour
     {
         keyItems++;
         Debug.Log(keyItems);
-        keyitemsText.text = keyItems + " / " + "7";
+        keyitemsText.text = keyItems + " / " + "18";
     }
 }
