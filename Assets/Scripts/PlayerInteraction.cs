@@ -7,6 +7,7 @@ public class PlayerInteraction : MonoBehaviour
 {
     public LayerMask interactMask;
     public GameObject interactScreen;
+    public GameObject pickupScreen;
     Camera cam;
     SpawnController spawnController;
     InsideTransitions insideTransitions;
@@ -26,7 +27,7 @@ public class PlayerInteraction : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 2, interactMask))
         {
-            ShowCanvas();
+            ShowCanvas(hit);
             if (Input.GetKeyDown(KeyCode.E))
             {
                 if (hit.collider.CompareTag("SceneMove"))
@@ -44,16 +45,23 @@ public class PlayerInteraction : MonoBehaviour
                 {
                     spawnController.Transition(hit.transform);
                 }
+                else if (hit.collider.CompareTag("KeyItem"))
+                {
+                    Destroy(hit.transform.gameObject);
+                    Debug.Log("Picked Up");
+                }
             }
         }
         else
         {
             interactScreen.SetActive(false);
+            pickupScreen.SetActive(false);
         }
     }
 
-    void ShowCanvas()
+    void ShowCanvas(RaycastHit hit)
     {
-        interactScreen.SetActive(true);
+        if (hit.transform.gameObject.tag == "KeyItem") pickupScreen.SetActive(true);
+        else interactScreen.SetActive(true);
     }
 }
