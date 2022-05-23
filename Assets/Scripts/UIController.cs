@@ -33,5 +33,6 @@ public class UIController : MonoBehaviour
         playerScript.enabled = true;
         cameraScript.enabled = true;
         loreText.SetActive(false);
+        SpawnController.introPlayed = true;
     }
 }

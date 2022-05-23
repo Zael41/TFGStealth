@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class SpawnController : MonoBehaviour
 {
@@ -10,11 +12,13 @@ public class SpawnController : MonoBehaviour
     public static bool introPlayed;
     public static int sceneNumber;
     public static Animator animator;
+    public static int keyItems;
 
     public Transform[] transitions;
     private Transform nextTransition;
     public PlayerMovement playerMovement;
     public GameObject pauseMenu;
+    public TMP_Text keyitemsText;
 
     // Start is called before the first frame update
     void Awake()
@@ -85,6 +89,8 @@ public class SpawnController : MonoBehaviour
         {
             pauseMenu.SetActive(false);
             animator.SetTrigger("FadeOut");
+            keyItems = 0;
+            keyitemsText.text = keyItems + " / " + "7";
         }
         Debug.Log("OnSceneLoaded: " + scene.name);
         if (scene.name != "MainMenuScene")
@@ -129,9 +135,12 @@ public class SpawnController : MonoBehaviour
 
     public void PauseMenu()
     {
-        Cursor.lockState = CursorLockMode.None;
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0f;
+        if (introPlayed)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            pauseMenu.SetActive(true);
+            Time.timeScale = 0f;
+        }
     }
 
     public void ReturnButton()
@@ -148,5 +157,12 @@ public class SpawnController : MonoBehaviour
         introPlayed = false;
         sceneNumber = 3;
         FadeToLevel();
+    }
+
+    public void KeyItemGet()
+    {
+        keyItems++;
+        Debug.Log(keyItems);
+        keyitemsText.text = keyItems + " / " + "7";
     }
 }
