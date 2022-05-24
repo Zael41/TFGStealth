@@ -29,6 +29,9 @@ public class EnemyNavMesh : MonoBehaviour
     Color originalSpotlightColor;
     bool playerDisabled;
     static EnemyNavMesh lastGuard;
+    private Vector3 investigationSpot;
+    bool waitingForClues;
+    Coroutine co;
 
     private void Awake()
     {
@@ -52,21 +55,38 @@ public class EnemyNavMesh : MonoBehaviour
 
     private void Update()
     {
+        if (Vector3.Distance(this.transform.position, playerPosition.position) < playerPosition.GetComponentInParent<PlayerMovement>().detectionRange)
+        {
+            if (myState == State.Patrol)
+            {
+                myState = State.Investigate;
+                investigationSpot = playerPosition.position;
+            }
+            else if (myState == State.Investigate && waitingForClues)
+            {
+                StopCoroutine(co);
+                investigationSpot = playerPosition.position;
+                waitingForClues = false;
+            }
+        }
         if (myState == State.Chase)
         {
+            StopCoroutine(co);
+            waitingForClues = false;
             navMeshAgent.isStopped = false;
             myAnimator.SetBool("isWalking", true);
             navMeshAgent.destination = playerPosition.position;
         }
-        else if (myState == State.Patrol)
+        else if (myState == State.Investigate && !waitingForClues)
         {
-            /*myAnimator.SetBool("isWalking", true);
-            navMeshAgent.destination = waypoints[actualWaypoint].position;
-            float dist = Vector3.Distance(this.transform.position, waypoints[actualWaypoint].position);
-            if (dist < 0.2f)
+            navMeshAgent.isStopped = false;
+            myAnimator.SetBool("isWalking", true);
+            navMeshAgent.destination = investigationSpot;
+            if (Vector3.Distance(this.transform.position, investigationSpot) < 0.2f)
             {
-                actualWaypoint = (actualWaypoint + 1) % waypoints.Length;
-            }*/
+                co = StartCoroutine(WaitForClues());
+                waitingForClues = true;
+            }
         }
         if (CanSeePlayer())
         {
@@ -129,6 +149,17 @@ public class EnemyNavMesh : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    IEnumerator WaitForClues()
+    {
+        myAnimator.SetBool("isWalking", false);
+        navMeshAgent.isStopped = true;
+        yield return new WaitForSeconds(3f);
+        if (myState == State.Investigate) myState = State.Patrol;
+        navMeshAgent.isStopped = false;
+        waitingForClues = false;
+        yield break;
     }
 
     bool CanSeePlayer()
