@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     public float groundDistance = 0.2f;
     public LayerMask groundMask;
     public Camera cam;
+    public float detectionRange;
 
     private float fovTargetNormal = 60f;
     private float fovTargetSprint = 80f;
@@ -62,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
             CrouchControl();
             MovementControl(move);
             JumpControl();
+            DetectionControl();
         }
         
         /*SprintControl(move);
@@ -158,6 +160,13 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    void DetectionControl()
+    {
+        if (isSprinting) detectionRange = 4;
+        else if (isCrouching) detectionRange = 1;
+        else detectionRange = 2;
+    }
+
     void Disable()
     {
         disabled = true;
@@ -171,5 +180,15 @@ public class PlayerMovement : MonoBehaviour
     void OnDestroy()
     {
         EnemyNavMesh.OnGuardHasSpottedPlayer -= Disable;
+    }
+
+    public bool CheckSprint()
+    {
+        return isSprinting;
+    }
+
+    public bool CheckCrouch()
+    {
+        return isCrouching;
     }
 }
