@@ -31,7 +31,9 @@ public class EnemyNavMesh : MonoBehaviour
     static EnemyNavMesh lastGuard;
     private Vector3 investigationSpot;
     bool waitingForClues;
+    bool blindChasing;
     Coroutine co;
+    Coroutine coBlind;
 
     private void Awake()
     {
@@ -76,6 +78,7 @@ public class EnemyNavMesh : MonoBehaviour
             navMeshAgent.isStopped = false;
             myAnimator.SetBool("isWalking", true);
             navMeshAgent.destination = playerPosition.position;
+            if (coBlind == null) coBlind = StartCoroutine(BlindChasing());
         }
         else if (myState == State.Investigate && !waitingForClues)
         {
@@ -94,6 +97,8 @@ public class EnemyNavMesh : MonoBehaviour
             playerVisibleTimer += Time.deltaTime;
             lastGuard = this;
             myState = State.Chase;
+            StopCoroutine(coBlind);
+            coBlind = null;
         }
         else if (this == lastGuard)
         {
@@ -102,9 +107,12 @@ public class EnemyNavMesh : MonoBehaviour
         }
         if (myState == State.Chase && !CanSeePlayer())
         {
-            myState = State.Investigate;
-            co = StartCoroutine(WaitForClues());
-            waitingForClues = true;
+            if (!blindChasing)
+            {
+                myState = State.Investigate;
+                co = StartCoroutine(WaitForClues());
+                waitingForClues = true;
+            }
         }
         playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
         ManageTimer();
@@ -118,6 +126,14 @@ public class EnemyNavMesh : MonoBehaviour
                 playerDisabled = true;
             }
         }
+    }
+
+    IEnumerator BlindChasing()
+    {
+        blindChasing = true;
+        yield return new WaitForSeconds(3f);
+        blindChasing = false;
+        yield return null;
     }
 
     void ManageTimer()
