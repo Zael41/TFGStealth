@@ -64,14 +64,14 @@ public class EnemyNavMesh : MonoBehaviour
             }
             else if (myState == State.Investigate && waitingForClues)
             {
-                StopCoroutine(co);
+                if (co != null) StopCoroutine(co);
                 investigationSpot = playerPosition.position;
                 waitingForClues = false;
             }
         }
         if (myState == State.Chase)
         {
-            StopCoroutine(co);
+            if (co != null) StopCoroutine(co);
             waitingForClues = false;
             navMeshAgent.isStopped = false;
             myAnimator.SetBool("isWalking", true);
@@ -93,11 +93,18 @@ public class EnemyNavMesh : MonoBehaviour
             //spotLight.color = Color.red;
             playerVisibleTimer += Time.deltaTime;
             lastGuard = this;
+            myState = State.Chase;
         }
         else if (this == lastGuard)
         {
             //spotLight.color = originalSpotlightColor;
             playerVisibleTimer -= Time.deltaTime;
+        }
+        if (myState == State.Chase && !CanSeePlayer())
+        {
+            myState = State.Investigate;
+            co = StartCoroutine(WaitForClues());
+            waitingForClues = true;
         }
         playerVisibleTimer = Mathf.Clamp(playerVisibleTimer, 0, timeToSpotPlayer);
         ManageTimer();
@@ -156,7 +163,7 @@ public class EnemyNavMesh : MonoBehaviour
         myAnimator.SetBool("isWalking", false);
         navMeshAgent.isStopped = true;
         yield return new WaitForSeconds(3f);
-        if (myState == State.Investigate) myState = State.Patrol;
+        myState = State.Patrol;
         navMeshAgent.isStopped = false;
         waitingForClues = false;
         yield break;
