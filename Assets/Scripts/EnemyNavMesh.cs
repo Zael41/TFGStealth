@@ -97,7 +97,7 @@ public class EnemyNavMesh : MonoBehaviour
             playerVisibleTimer += Time.deltaTime;
             lastGuard = this;
             myState = State.Chase;
-            StopCoroutine(coBlind);
+            if (coBlind != null) StopCoroutine(coBlind);
             coBlind = null;
         }
         else if (this == lastGuard)
