@@ -35,4 +35,10 @@ public class UIController : MonoBehaviour
         loreText.SetActive(false);
         SpawnController.introPlayed = true;
     }
+
+    public void CloseGame()
+    {
+        Debug.Log("Quitting game");
+        Application.Quit();
+    }
 }

@@ -107,6 +107,18 @@ public class SpawnController : MonoBehaviour
             transitions = GameObject.Find("InsideTransitions").GetComponentsInChildren<Transform>();
             playerMovement = GameObject.Find("FirstPersonPlayer").GetComponent<PlayerMovement>();
         }
+        if (scene.name == "ExteriorScene")
+        {
+            GameObject escapeRoute = GameObject.Find("EscapeRoute");
+            if (keyItems == 18)
+            {
+                escapeRoute.SetActive(true);
+            }
+            else
+            {
+                escapeRoute.SetActive(false);
+            }
+        }
     }
 
     public void Transition(Transform transitionStart)
