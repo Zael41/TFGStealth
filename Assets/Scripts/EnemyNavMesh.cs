@@ -140,6 +140,7 @@ public class EnemyNavMesh : MonoBehaviour
     {
         if (playerDisabled)
         {
+            playerVisibleTimer = 0f;
             return;
         }
         if (CanSeePlayer())

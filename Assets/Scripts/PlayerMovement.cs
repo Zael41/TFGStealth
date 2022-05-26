@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     bool isSprinting;
     bool isCrouching;
     bool disabled;
+    SpawnController spawnController;
 
     void Start()
     {
@@ -64,6 +65,13 @@ public class PlayerMovement : MonoBehaviour
             MovementControl(move);
             JumpControl();
             DetectionControl();
+        }
+        else if (spawnController == null)
+        {
+            spawnController = GameObject.Find("SpawnController").GetComponent<SpawnController>();
+            SpawnController.keyItems = 0;
+            spawnController.keyitemsText.text = SpawnController.keyItems + " / " + "18";
+            spawnController.ChangeScene("NorthEntrance", 2);
         }
         
         /*SprintControl(move);
