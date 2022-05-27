@@ -34,11 +34,14 @@ public class EnemyNavMesh : MonoBehaviour
     bool blindChasing;
     Coroutine co;
     Coroutine coBlind;
+    AudioSource audioSource;
+    bool checkFootsteps;
 
     private void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         myAnimator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         myState = State.Patrol;
         targetWaypoint = 1;
         viewAngle = spotLight.spotAngle;
@@ -53,6 +56,23 @@ public class EnemyNavMesh : MonoBehaviour
             scripts.Add(enemy.GetComponent<EnemyNavMesh>());
         }
         lastGuard = (EnemyNavMesh)scripts[0];
+        checkFootsteps = true;
+        StartCoroutine(Footsteps());
+    }
+
+    IEnumerator Footsteps()
+    {
+        while (true)
+        {
+            if (checkFootsteps)
+            {
+                //audioSource.clip = musicClips[0];
+                audioSource.volume = 0.4f;
+                audioSource.Play();
+                yield return new WaitForSeconds(0.4f);
+            }
+            yield return null;
+        }
     }
 
     private void Update()
@@ -166,7 +186,9 @@ public class EnemyNavMesh : MonoBehaviour
                 {
                     myAnimator.SetBool("isWalking", false);
                     navMeshAgent.isStopped = true;
+                    checkFootsteps = false;
                     yield return new WaitForSeconds(2f);
+                    checkFootsteps = true;
                     targetWaypoint = (targetWaypoint + 1) % waypoints.Length;
                     navMeshAgent.isStopped = false;
                 }
@@ -179,7 +201,9 @@ public class EnemyNavMesh : MonoBehaviour
     {
         myAnimator.SetBool("isWalking", false);
         navMeshAgent.isStopped = true;
+        checkFootsteps = false;
         yield return new WaitForSeconds(3f);
+        checkFootsteps = true;
         myState = State.Patrol;
         navMeshAgent.isStopped = false;
         waitingForClues = false;
