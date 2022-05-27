@@ -12,6 +12,7 @@ public class SpawnController : MonoBehaviour
     public static bool introPlayed;
     public static int sceneNumber;
     public static Animator animator;
+    public static AudioSource audioSource;
     public static int keyItems;
 
     public Transform[] transitions;
@@ -19,6 +20,7 @@ public class SpawnController : MonoBehaviour
     public PlayerMovement playerMovement;
     public GameObject pauseMenu;
     public TMP_Text keyitemsText;
+    public AudioClip[] musicClips;
 
     // Start is called before the first frame update
     void Awake()
@@ -29,6 +31,7 @@ public class SpawnController : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
             animator = GetComponentInChildren<Animator>();
+            audioSource = GetComponent<AudioSource>();
         }
         else
         {
@@ -91,6 +94,9 @@ public class SpawnController : MonoBehaviour
             animator.SetTrigger("FadeOut");
             keyItems = 0;
             keyitemsText.text = keyItems + " / " + "18";
+            audioSource.clip = musicClips[0];
+            audioSource.volume = 0.5f;
+            audioSource.Play();
         }
         Debug.Log("OnSceneLoaded: " + scene.name);
         if (scene.name != "MainMenuScene")
@@ -106,6 +112,9 @@ public class SpawnController : MonoBehaviour
         {
             transitions = GameObject.Find("InsideTransitions").GetComponentsInChildren<Transform>();
             playerMovement = GameObject.Find("FirstPersonPlayer").GetComponent<PlayerMovement>();
+            audioSource.clip = musicClips[2];
+            audioSource.volume = 0.2f;
+            audioSource.Play();
         }
         if (scene.name == "ExteriorScene")
         {
@@ -118,6 +127,9 @@ public class SpawnController : MonoBehaviour
             {
                 escapeRoute.SetActive(false);
             }
+            audioSource.clip = musicClips[1];
+            audioSource.volume = 0.2f;
+            audioSource.Play();
         }
     }
 
