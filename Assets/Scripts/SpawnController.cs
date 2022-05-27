@@ -14,6 +14,7 @@ public class SpawnController : MonoBehaviour
     public static Animator animator;
     public static AudioSource audioSource;
     public static int keyItems;
+    public static bool[] itemsObtained;
 
     public Transform[] transitions;
     private Transform nextTransition;
@@ -32,6 +33,7 @@ public class SpawnController : MonoBehaviour
             SceneManager.sceneLoaded += OnSceneLoaded;
             animator = GetComponentInChildren<Animator>();
             audioSource = GetComponent<AudioSource>();
+            itemsObtained = new bool[18];
         }
         else
         {
@@ -115,6 +117,16 @@ public class SpawnController : MonoBehaviour
             audioSource.clip = musicClips[2];
             audioSource.volume = 0.4f;
             audioSource.Play();
+            int childIndex = 0;
+            Transform keyItemsParent = GameObject.Find("KeyItems").GetComponent<Transform>();
+            foreach (Transform child in keyItemsParent)
+            {
+                if (itemsObtained[childIndex] == true)
+                {
+                    Destroy(child.gameObject);
+                }
+                childIndex++;
+            }
         }
         if (scene.name == "ExteriorScene")
         {
@@ -183,10 +195,20 @@ public class SpawnController : MonoBehaviour
         FadeToLevel();
     }
 
-    public void KeyItemGet()
+    public void KeyItemGet(string name)
     {
         keyItems++;
         Debug.Log(keyItems);
         keyitemsText.text = keyItems + " / " + "18";
+        int childIndex = 0;
+        Transform keyItemsParent = GameObject.Find("KeyItems").GetComponent<Transform>();
+        foreach (Transform child in keyItemsParent)
+        {
+            if (child.gameObject.name == name)
+            {
+                itemsObtained[childIndex] = true;
+            }
+            childIndex++;
+        }
     }
 }

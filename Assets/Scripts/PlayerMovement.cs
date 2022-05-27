@@ -77,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
             spawnController = GameObject.Find("SpawnController").GetComponent<SpawnController>();
             SpawnController.keyItems = 0;
             spawnController.keyitemsText.text = SpawnController.keyItems + " / " + "18";
+            SpawnController.itemsObtained = new bool[18];
             spawnController.ChangeScene("NorthEntrance", 2);
         }
         

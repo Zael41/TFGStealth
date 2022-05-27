@@ -48,7 +48,7 @@ public class PlayerInteraction : MonoBehaviour
                 else if (hit.collider.CompareTag("KeyItem"))
                 {
                     Destroy(hit.transform.gameObject);
-                    spawnController.KeyItemGet();
+                    spawnController.KeyItemGet(hit.transform.gameObject.name);
                 }
             }
         }
