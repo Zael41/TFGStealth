@@ -31,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
     bool isCrouching;
     bool disabled;
     SpawnController spawnController;
+    AudioSource audioSource;
+    bool checkFootsteps;
 
     void Start()
     {
@@ -42,6 +44,8 @@ public class PlayerMovement : MonoBehaviour
         isSprinting = false;
         isCrouching = false;
         EnemyNavMesh.OnGuardHasSpottedPlayer += Disable;
+        audioSource = GetComponent<AudioSource>();
+        StartCoroutine(Footsteps());
     }
 
     // Update is called once per frame
@@ -60,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
         if (!disabled)
         {
             move = transform.right * x + transform.forward * z;
+            if (move == Vector3.zero) checkFootsteps = false;
+            else checkFootsteps = true;
             SprintControl(move);
             CrouchControl();
             MovementControl(move);
@@ -173,6 +179,23 @@ public class PlayerMovement : MonoBehaviour
         if (isSprinting) detectionRange = 4;
         else if (isCrouching) detectionRange = 1;
         else detectionRange = 2;
+    }
+
+    IEnumerator Footsteps()
+    {
+        while (true)
+        {
+            if (checkFootsteps && isGrounded)
+            {
+                //audioSource.clip = musicClips[0];
+                audioSource.volume = 0.5f;
+                audioSource.Play();
+                if (isCrouching) yield return new WaitForSeconds(0.5f);
+                else if (isSprinting) yield return new WaitForSeconds(0.3f);
+                else yield return new WaitForSeconds(0.4f);
+            }
+            yield return null;
+        }
     }
 
     void Disable()

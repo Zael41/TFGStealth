@@ -113,7 +113,7 @@ public class SpawnController : MonoBehaviour
             transitions = GameObject.Find("InsideTransitions").GetComponentsInChildren<Transform>();
             playerMovement = GameObject.Find("FirstPersonPlayer").GetComponent<PlayerMovement>();
             audioSource.clip = musicClips[2];
-            audioSource.volume = 0.2f;
+            audioSource.volume = 0.4f;
             audioSource.Play();
         }
         if (scene.name == "ExteriorScene")
