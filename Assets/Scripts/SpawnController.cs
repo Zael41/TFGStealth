@@ -96,6 +96,7 @@ public class SpawnController : MonoBehaviour
             animator.SetTrigger("FadeOut");
             keyItems = 0;
             keyitemsText.text = keyItems + " / " + "18";
+            itemsObtained = new bool[18];
             audioSource.clip = musicClips[0];
             audioSource.volume = 0.5f;
             audioSource.Play();
