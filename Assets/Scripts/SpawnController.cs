@@ -161,7 +161,7 @@ public class SpawnController : MonoBehaviour
                 nextTransition = t;
             }
         }
-        playerMovement.TransitionDisable();
+        //playerMovement.TransitionDisable();
         animator.SetTrigger("TransitionFade");
     }
 
@@ -169,7 +169,7 @@ public class SpawnController : MonoBehaviour
     {
         Debug.Log(nextTransition.gameObject.name);
         playerMovement.gameObject.transform.position = nextTransition.position;
-        playerMovement.TransitionDisable();
+        //playerMovement.TransitionDisable();
         animator.SetTrigger("TransitionFade");
     }
 
