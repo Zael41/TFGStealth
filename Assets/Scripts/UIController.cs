@@ -9,15 +9,21 @@ public class UIController : MonoBehaviour
     public GameObject loreText;
     public PlayerMovement playerScript;
     public MouseLook cameraScript;
+    public GameObject crosshair;
 
     // Start is called before the first frame update
     void Start()
     {
+        crosshair = GameObject.Find("CrosshairCanvas");
         if (SpawnController.introPlayed == true)
         {
             playerScript.enabled = true;
             cameraScript.enabled = true;
             loreText.SetActive(false);
+        }
+        else
+        {
+            crosshair.SetActive(false);
         }
     }
 
@@ -34,6 +40,7 @@ public class UIController : MonoBehaviour
         cameraScript.enabled = true;
         loreText.SetActive(false);
         SpawnController.introPlayed = true;
+        crosshair.SetActive(true);
     }
 
     public void CloseGame()

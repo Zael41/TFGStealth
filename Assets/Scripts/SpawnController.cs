@@ -20,6 +20,7 @@ public class SpawnController : MonoBehaviour
     private Transform nextTransition;
     public PlayerMovement playerMovement;
     public GameObject pauseMenu;
+    public GameObject crosshair;
     public TMP_Text keyitemsText;
     public AudioClip[] musicClips;
 
@@ -100,6 +101,7 @@ public class SpawnController : MonoBehaviour
             audioSource.clip = musicClips[0];
             audioSource.volume = 0.5f;
             audioSource.Play();
+            crosshair.SetActive(false);
         }
         Debug.Log("OnSceneLoaded: " + scene.name);
         if (scene.name != "MainMenuScene")
@@ -110,6 +112,7 @@ public class SpawnController : MonoBehaviour
                 Transform spawn = GameObject.Find(spawnObject).GetComponent<Transform>();
                 player.position = spawn.position;
             }
+            crosshair.SetActive(true);
         }
         if (scene.name == "Floor1Scene")
         {
@@ -174,6 +177,7 @@ public class SpawnController : MonoBehaviour
     {
         if (introPlayed)
         {
+            crosshair.SetActive(false);
             Cursor.lockState = CursorLockMode.None;
             pauseMenu.SetActive(true);
             Time.timeScale = 0f;
@@ -182,6 +186,7 @@ public class SpawnController : MonoBehaviour
 
     public void ReturnButton()
     {
+        crosshair.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         pauseMenu.SetActive(false);
         Time.timeScale = 1.0f;
