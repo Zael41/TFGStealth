@@ -31,8 +31,9 @@ public class PlayerMovement : MonoBehaviour
     bool isCrouching;
     bool disabled;
     SpawnController spawnController;
-    AudioSource audioSource;
+    public AudioSource[] audioSource;
     bool checkFootsteps;
+    bool playFall;
 
     void Start()
     {
@@ -44,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
         isSprinting = false;
         isCrouching = false;
         EnemyNavMesh.OnGuardHasSpottedPlayer += Disable;
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = GetComponents<AudioSource>();
         StartCoroutine(Footsteps());
     }
 
@@ -52,7 +53,11 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
+        if (isGrounded && playFall)
+        {
+            audioSource[2].Play();
+            playFall = false;
+        }
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -168,6 +173,9 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+            audioSource[1].volume = 0.2f;
+            audioSource[1].Play();
+            StartCoroutine(FallTiming());
         }
 
         velocity.y += gravity * Time.deltaTime;
@@ -182,6 +190,13 @@ public class PlayerMovement : MonoBehaviour
         else detectionRange = 2;
     }
 
+    IEnumerator FallTiming()
+    {
+        yield return new WaitForSeconds(0.2f);
+        playFall = true;
+        yield break;
+    }
+
     IEnumerator Footsteps()
     {
         while (true)
@@ -189,8 +204,8 @@ public class PlayerMovement : MonoBehaviour
             if (checkFootsteps && isGrounded)
             {
                 //audioSource.clip = musicClips[0];
-                audioSource.volume = 0.1f;
-                audioSource.Play();
+                audioSource[0].volume = 0.1f;
+                audioSource[0].Play();
                 if (isCrouching) yield return new WaitForSeconds(0.5f);
                 else if (isSprinting) yield return new WaitForSeconds(0.3f);
                 else yield return new WaitForSeconds(0.4f);
