@@ -21,12 +21,12 @@ public class DetectionArea : MonoBehaviour
         transform.position = player.position;
         if (playerMovement.CheckSprint() && alreadySprinting == false)
         {
-            transform.localScale = transform.localScale * 2f;
+            transform.localScale = new Vector3(2f, 2f, 2f);
             alreadySprinting = true;
         }
         else if (playerMovement.CheckCrouch() && alreadyCrouching == false)
         {
-            transform.localScale = transform.localScale * 0.5f;
+            transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             alreadyCrouching = true;
         }
         else if (!playerMovement.CheckSprint() && !playerMovement.CheckCrouch())
