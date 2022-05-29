@@ -189,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
             if (checkFootsteps && isGrounded)
             {
                 //audioSource.clip = musicClips[0];
-                audioSource.volume = 0.5f;
+                audioSource.volume = 0.1f;
                 audioSource.Play();
                 if (isCrouching) yield return new WaitForSeconds(0.5f);
                 else if (isSprinting) yield return new WaitForSeconds(0.3f);

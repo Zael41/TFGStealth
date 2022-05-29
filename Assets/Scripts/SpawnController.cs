@@ -208,6 +208,8 @@ public class SpawnController : MonoBehaviour
         keyitemsText.text = keyItems + " / " + "18";
         int childIndex = 0;
         Transform keyItemsParent = GameObject.Find("KeyItems").GetComponent<Transform>();
+        AudioSource itemAudio = GameObject.Find("KeyItems").GetComponent<AudioSource>();
+        itemAudio.Play();
         foreach (Transform child in keyItemsParent)
         {
             if (child.gameObject.name == name)
