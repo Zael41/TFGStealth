@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Rendering.HighDefinition;
 
 public class SpawnController : MonoBehaviour
 {
@@ -133,7 +134,6 @@ public class SpawnController : MonoBehaviour
                 childIndex++;
             }
             itemPass = GameObject.Find("KeyItemPass");
-            itemPass.SetActive(false);
         }
         if (scene.name == "ExteriorScene")
         {
@@ -230,9 +230,9 @@ public class SpawnController : MonoBehaviour
 
     IEnumerator LaptopTime()
     {
-        itemPass.SetActive(true);
+        itemPass.GetComponent<CustomPassVolume>().customPasses[1].enabled = true;
         yield return new WaitForSeconds(5f);
-        itemPass.SetActive(false);
+        itemPass.GetComponent<CustomPassVolume>().customPasses[1].enabled = false;
         yield break;
     }
 }
