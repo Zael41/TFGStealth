@@ -8,6 +8,7 @@ TagManager:
   - SceneMove
   - InsideMove
   - KeyItem
+  - Laptop
   layers:
   - Default
   - TransparentFX

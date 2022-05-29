@@ -8,6 +8,7 @@ public class PlayerInteraction : MonoBehaviour
     public LayerMask interactMask;
     public GameObject interactScreen;
     public GameObject pickupScreen;
+    public GameObject laptopScreen;
     Camera cam;
     SpawnController spawnController;
     InsideTransitions insideTransitions;
@@ -50,18 +51,24 @@ public class PlayerInteraction : MonoBehaviour
                     Destroy(hit.transform.gameObject);
                     spawnController.KeyItemGet(hit.transform.gameObject.name);
                 }
+                else if (hit.collider.CompareTag("Laptop"))
+                {
+                    spawnController.MarkItems();
+                }
             }
         }
         else
         {
             interactScreen.SetActive(false);
             pickupScreen.SetActive(false);
+            laptopScreen.SetActive(false);
         }
     }
 
     void ShowCanvas(RaycastHit hit)
     {
         if (hit.transform.gameObject.tag == "KeyItem") pickupScreen.SetActive(true);
+        else if (hit.transform.gameObject.tag == "Laptop") laptopScreen.SetActive(true);
         else interactScreen.SetActive(true);
     }
 }

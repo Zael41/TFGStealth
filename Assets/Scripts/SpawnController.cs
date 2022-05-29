@@ -23,6 +23,7 @@ public class SpawnController : MonoBehaviour
     public GameObject crosshair;
     public TMP_Text keyitemsText;
     public AudioClip[] musicClips;
+    private GameObject itemPass;
 
     // Start is called before the first frame update
     void Awake()
@@ -131,6 +132,8 @@ public class SpawnController : MonoBehaviour
                 }
                 childIndex++;
             }
+            itemPass = GameObject.Find("KeyItemPass");
+            itemPass.SetActive(false);
         }
         if (scene.name == "ExteriorScene")
         {
@@ -218,5 +221,18 @@ public class SpawnController : MonoBehaviour
             }
             childIndex++;
         }
+    }
+
+    public void MarkItems()
+    {
+        StartCoroutine(LaptopTime());
+    }
+
+    IEnumerator LaptopTime()
+    {
+        itemPass.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        itemPass.SetActive(false);
+        yield break;
     }
 }
