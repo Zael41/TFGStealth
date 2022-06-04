@@ -13,6 +13,8 @@ public class VictoryTrigger : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             victoryScreen.SetActive(true);
             Time.timeScale = 0f;
+            GameObject crosshair = GameObject.Find("CrosshairCanvas");
+            crosshair.SetActive(false);
         }
     }
 }
